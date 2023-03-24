@@ -30,5 +30,10 @@ public class ClienteController {
         }
         return new ResponseEntity("El cliente no fue registrado",HttpStatus.BAD_REQUEST);
     }
+    @PostMapping("/clientes")
+    public String crearClientes(){
+        this.clienteService.crearClientes();
+        return "Clientes creados!";
+    }
 
 }

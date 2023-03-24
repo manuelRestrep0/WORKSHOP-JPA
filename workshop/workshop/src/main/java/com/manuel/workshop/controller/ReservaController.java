@@ -24,6 +24,20 @@ public class ReservaController {
     public List<Habitacion> disponiblesFecha(@PathVariable("fecha") String fecha){
         return this.reservaService.obtenerHabitacionesDisponiblesFecha(fecha);
     }
+    @GetMapping("/disponibles/tipo/{fecha}")
+    public List<Habitacion> disponiblesTipo(@RequestParam("tipo") String tipo, @PathVariable("fecha") String fecha){
+        return this.reservaService.filtrarHabitacionesTipo(tipo,fecha);
+    }
+
+    @GetMapping("/reservas/{cedula}")
+    public List<Reserva> reservasCliente(@PathVariable("cedula") Integer cedula){
+        return this.reservaService.obtenerReservasCliente(cedula);
+    }
+
+    @PostMapping("/reservar")
+    public Reserva reservar(@RequestParam("numero")Integer numeroHabitacion, @RequestParam("fecha") String fecha, @RequestParam("cedula") Integer cedula){
+        return this.reservaService.crearReserva(numeroHabitacion,cedula,fecha);
+    }
 
 
 }
