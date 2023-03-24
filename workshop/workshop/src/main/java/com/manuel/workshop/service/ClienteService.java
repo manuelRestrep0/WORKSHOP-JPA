@@ -1,5 +1,6 @@
 package com.manuel.workshop.service;
 
+import com.manuel.workshop.exception.ApiRequestException;
 import com.manuel.workshop.model.Cliente;
 import com.manuel.workshop.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,20 @@ public class ClienteService {
 
 
     public Cliente crear(Cliente cliente){
+       /* if(cliente.getNombre()==null){
+            throw new ClienteRequestException("No name", HttpStatus.BAD_REQUEST, ZonedDateTime.now());
+        } else if(cliente.getApellido()==null){
+            throw new RuntimeException("El cliente que ingreso no tiene apellido");
+        } else{
+            return this.clienteRepository.save(cliente);
+        }
+
+        */
+        if(cliente.getNombre()==null){
+            throw new ApiRequestException("Se requiere el nombre");
+        } else if(cliente.getApellido()==null){
+            throw new ApiRequestException("Se requiere el apellido");
+        }
         return this.clienteRepository.save(cliente);
     }
 

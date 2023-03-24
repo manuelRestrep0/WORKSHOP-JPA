@@ -1,6 +1,7 @@
 package com.manuel.workshop.service;
 
 import com.manuel.workshop.controller.ReservaController;
+import com.manuel.workshop.exception.ApiRequestException;
 import com.manuel.workshop.model.Cliente;
 import com.manuel.workshop.model.Habitacion;
 import com.manuel.workshop.model.Reserva;
@@ -67,18 +68,27 @@ public class ReservaService {
     }
 
     public Reserva crearReserva(Integer numHabitacion, Integer cedula, String fecha){
+        LocalDate auxFecha = stringToDate(fecha);
+        if(auxFecha.isBefore(LocalDate.now())){
+            throw new ApiRequestException("La fecha es erronea");
+        }
         Optional<Cliente> auxCliente = this.clienteRepository.findById(cedula);
         if(auxCliente.isPresent()){
             Optional<Habitacion> auxHab = this.habitacionRepository.findById(numHabitacion);
             if(auxHab.isPresent()){
-                LocalDate auxFecha = stringToDate(fecha);
+
                 List<Habitacion> disponibles = validarDisponibilidadFecha(auxFecha);
                 if(disponibles.contains(auxHab.get())){
                     return this.reservaRepository.save(new Reserva(auxFecha,auxHab.get(),auxCliente.get(),auxHab.get().getPrecioBase()));
+                } else{
+                    throw new ApiRequestException("Esta habitacion no esta disponible");
                 }
+            } else{
+                throw new ApiRequestException("Esta habitacion no se encuentra registrada");
             }
+        } else{
+            throw new ApiRequestException("Este cliente no esta registrado");
         }
-        return null;
     }
 
     public List<Reserva> obtenerReservasCliente(Integer cedula){
