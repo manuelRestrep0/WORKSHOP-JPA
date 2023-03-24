@@ -19,14 +19,6 @@ public class ClienteController {
     @PostMapping("/cliente")
     public Cliente crearCliente(@RequestBody Cliente cliente){
         return this.clienteService.crear(cliente);
-
-        /*
-        if(clienteValidation != null){
-            return new ResponseEntity("Cliente creado!", HttpStatus.CREATED);
-        }
-        return new ResponseEntity("El cliente no fue registrado",HttpStatus.BAD_REQUEST);
-
-         */
     }
     @PostMapping("/clientes")
     public String crearClientes(){

@@ -1,5 +1,6 @@
 package com.manuel.workshop.service;
 
+import com.manuel.workshop.exception.ApiRequestException;
 import com.manuel.workshop.model.Habitacion;
 import com.manuel.workshop.repository.HabitacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,11 @@ public class HabitacionService {
     }
 
     public Habitacion crearHabitacion(Habitacion habitacion){
+        if(habitacion.getTipoHabitacion()==null){
+            throw new ApiRequestException("Hace falta el tipo de habitacion (estandar/premium)");
+        } else if(habitacion.getPrecioBase()==null){
+            throw new ApiRequestException("Hace falta el precio de la habitacion");
+        }
         return this.habitacionRepository.save(habitacion);
     }
     public void crearHabitaciones(){

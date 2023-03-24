@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,43 +32,21 @@ public class ReservaService {
 
     public List<Habitacion> obtenerHabitacionesDisponiblesFecha(String fecha){
         LocalDate date = stringToDate(fecha);
+        fechaValida(date);
         return validarDisponibilidadFecha(date);
     }
     public List<Habitacion> filtrarHabitacionesTipo(String tipo, String fecha){
         LocalDate date = stringToDate(fecha);
+        fechaValida(date);
         List<Habitacion> disponibles = validarDisponibilidadFecha(date);
         disponibles = disponibles.stream()
                 .filter(habitacion -> habitacion.getTipoHabitacion().equals(tipo))
                 .collect(Collectors.toList());
         return disponibles;
     }
-
-    public List<Habitacion> validarDisponibilidadFecha(LocalDate fecha){
-        List<Habitacion> disponibles = new ArrayList<>();
-        Habitacion auxHab;
-        Reserva auxRe;
-        Iterator<Habitacion> habitaciones = this.habitacionRepository.findAll().iterator();
-        Iterator<Reserva> habitacionesReservadas = this.reservaRepository.findAll().iterator();
-        while(habitaciones.hasNext()){
-            auxHab = habitaciones.next();
-            disponibles.add(auxHab);
-            while(habitacionesReservadas.hasNext()){
-                auxRe = habitacionesReservadas.next();
-                if(auxRe.getHabitacion().getNumero() == auxHab.getNumero()){
-                    if(auxRe.getFechaReserva().equals(fecha)){
-                        disponibles.remove(auxHab);
-                    }
-                }
-            }
-        }
-        return disponibles;
-    }
-
     public Reserva crearReserva(Integer numHabitacion, Integer cedula, String fecha){
         LocalDate auxFecha = stringToDate(fecha);
-        if(auxFecha.isBefore(LocalDate.now())){
-            throw new ApiRequestException("La fecha es erronea");
-        }
+        fechaValida(auxFecha);
         Optional<Cliente> auxCliente = this.clienteRepository.findById(cedula);
         if(auxCliente.isPresent()){
             Optional<Habitacion> auxHab = this.habitacionRepository.findById(numHabitacion);
@@ -90,8 +65,11 @@ public class ReservaService {
             throw new ApiRequestException("Este cliente no esta registrado");
         }
     }
-
     public List<Reserva> obtenerReservasCliente(Integer cedula){
+        Optional<Cliente> auxCliente = this.clienteRepository.findById(cedula);
+        if(!auxCliente.isPresent()){
+            throw new ApiRequestException("Esta cedula no esta registrada");
+        }
         Iterator<Reserva> reservas = this.reservaRepository.findAll().iterator();
         Reserva auxReserva;
         List<Reserva> reservasCliente = new ArrayList<>();
@@ -103,10 +81,31 @@ public class ReservaService {
         }
         return reservasCliente;
     }
+    public List<Habitacion> validarDisponibilidadFecha(LocalDate fecha){
+        List<Habitacion> disponibles = new ArrayList<>();
+        List<Habitacion> habReservas = new ArrayList<>();
 
+        Iterator<Habitacion> habitaciones = this.habitacionRepository.findAll().iterator();
+        Iterator<Reserva> habitacionesReservadas = this.reservaRepository.findAll().iterator();;
+        while(habitaciones.hasNext()) {
+            disponibles.add(habitaciones.next());
+        }
+        while(habitacionesReservadas.hasNext()){
+            habReservas.add(habitacionesReservadas.next().getHabitacion());
+        }
+        disponibles = disponibles.stream()
+                .filter(habitacion -> !habReservas.contains(habitacion))
+                .collect(Collectors.toList());
+        return disponibles;
+    }
     public LocalDate stringToDate(String fecha){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate date = LocalDate.parse(fecha,formatter);
         return date;
+    }
+    public void fechaValida(LocalDate fecha){
+        if(fecha.isBefore(LocalDate.now())){
+            throw new ApiRequestException("La fecha es erronea");
+        }
     }
 }

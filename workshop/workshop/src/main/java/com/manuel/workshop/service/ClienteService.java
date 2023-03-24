@@ -31,6 +31,8 @@ public class ClienteService {
             throw new ApiRequestException("Se requiere el nombre");
         } else if(cliente.getApellido()==null){
             throw new ApiRequestException("Se requiere el apellido");
+        } else if(cliente.getCedula()==null){
+            throw new ApiRequestException("Se requiere una identificacion valida");
         }
         return this.clienteRepository.save(cliente);
     }

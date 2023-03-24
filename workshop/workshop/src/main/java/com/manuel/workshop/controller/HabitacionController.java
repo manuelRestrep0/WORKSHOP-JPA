@@ -25,12 +25,8 @@ public class HabitacionController {
     }
 
     @PostMapping("/habitacion")
-    public ResponseEntity<Habitacion> crearHabitacion(@RequestBody Habitacion habitacion){
-        Optional<Habitacion> validation = Optional.ofNullable(this.habitacionService.crearHabitacion(habitacion));
-        if(validation != null){
-            return new ResponseEntity("Habitacion creada!", HttpStatus.CREATED);
-        }
-        return new ResponseEntity("La habitacion no fue registrada",HttpStatus.BAD_REQUEST);
+    public Habitacion crearHabitacion(@RequestBody Habitacion habitacion){
+        return this.habitacionService.crearHabitacion(habitacion);
     }
 
     @PostMapping("/habitaciones")
