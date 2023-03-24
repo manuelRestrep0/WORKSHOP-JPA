@@ -24,8 +24,8 @@ public class ReservaController {
     public List<Habitacion> disponiblesFecha(@PathVariable("fecha") String fecha){
         return this.reservaService.obtenerHabitacionesDisponiblesFecha(fecha);
     }
-    @GetMapping("/disponibles/tipo/{fecha}")
-    public List<Habitacion> disponiblesTipo(@RequestParam("tipo") String tipo, @PathVariable("fecha") String fecha){
+    @GetMapping("/disponibles/habitacion")
+    public List<Habitacion> disponiblesTipo(@RequestParam("tipo") String tipo, @RequestParam("fecha") String fecha){
         return this.reservaService.filtrarHabitacionesTipo(tipo,fecha);
     }
 
