@@ -1,6 +1,3 @@
-# WORKSHOP-JPA
-
-
 ## Pantallazos de las respuestas:
 
 ### creacion correcta de cliente:
