@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,36 +71,31 @@ public class ReservaService {
         if(!auxCliente.isPresent()){
             throw new ApiRequestException("Esta cedula no esta registrada");
         }
-        Iterator<Reserva> reservas = this.reservaRepository.findAll().iterator();
-        Reserva auxReserva;
-        List<Reserva> reservasCliente = new ArrayList<>();
-        while(reservas.hasNext()){
-            auxReserva = reservas.next();
-            if(auxReserva.getCliente().getCedula().equals(cedula)){
-                reservasCliente.add(auxReserva);
-            }
-        }
+        List<Reserva> reservasCliente = this.reservaRepository.findAll();
+        reservasCliente = reservasCliente.stream()
+                .filter(reserva -> reserva.getCliente().getCedula().equals(cedula))
+                .collect(Collectors.toList());
         return reservasCliente;
     }
     public List<Habitacion> validarDisponibilidadFecha(LocalDate fecha){
-        List<Habitacion> disponibles = new ArrayList<>();
+        List<Habitacion> disponibles = this.habitacionRepository.findAll();
         List<Habitacion> habReservas = new ArrayList<>();
-
-        Iterator<Habitacion> habitaciones = this.habitacionRepository.findAll().iterator();
-        Iterator<Reserva> habitacionesReservadas = this.reservaRepository.findAll().iterator();;
-        while(habitaciones.hasNext()) {
-            disponibles.add(habitaciones.next());
-        }
-        while(habitacionesReservadas.hasNext()){
-            habReservas.add(habitacionesReservadas.next().getHabitacion());
-        }
+        List<Reserva> habitacionesReservadas = this.reservaRepository.findAll();
+        habitacionesReservadas.stream()
+                .forEach(reserva -> habReservas.add(reserva.getHabitacion()));
         disponibles = disponibles.stream()
                 .filter(habitacion -> !habReservas.contains(habitacion))
                 .collect(Collectors.toList());
         return disponibles;
     }
     public LocalDate stringToDate(String fecha){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter;
+        try{
+            formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        } catch (DateTimeParseException e){
+            throw new ApiRequestException(e.getMessage());
+
+        }
         LocalDate date = LocalDate.parse(fecha,formatter);
         return date;
     }

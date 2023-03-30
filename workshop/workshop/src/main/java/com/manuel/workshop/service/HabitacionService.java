@@ -21,6 +21,8 @@ public class HabitacionService {
             throw new ApiRequestException("Hace falta el tipo de habitacion (estandar/premium)");
         } else if(habitacion.getPrecioBase()==null){
             throw new ApiRequestException("Hace falta el precio de la habitacion");
+        } else if(habitacion.getNumero()==null){
+            throw new ApiRequestException("Hace falta el numero de la habitacion");
         }
         return this.habitacionRepository.save(habitacion);
     }
