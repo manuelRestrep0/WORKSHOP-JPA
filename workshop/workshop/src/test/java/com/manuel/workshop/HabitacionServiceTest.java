@@ -1,5 +1,6 @@
 package com.manuel.workshop;
 
+import com.manuel.workshop.dto.HabitacionDTO;
 import com.manuel.workshop.exception.ApiRequestException;
 import com.manuel.workshop.model.Habitacion;
 import com.manuel.workshop.repository.HabitacionRepository;
@@ -21,7 +22,7 @@ public class HabitacionServiceTest {
 
     @Test
     public void crearHabitacion(){
-        Habitacion habitacion = new Habitacion(1,"premium",200);
+        HabitacionDTO habitacion = new HabitacionDTO(1,"premium",200);
         this.habitacionService.crearHabitacion(habitacion);
 
         assertTrue(habitacion.getTipoHabitacion().equals("premium"));
@@ -30,22 +31,22 @@ public class HabitacionServiceTest {
     }
     @Test(expected = ApiRequestException.class)
     public void crearHabitacionSinNumero(){
-        Habitacion habitacion = new Habitacion(null,"premium",200);
+        HabitacionDTO habitacion = new HabitacionDTO(null,"premium",200);
         this.habitacionService.crearHabitacion(habitacion);
     }
     @Test(expected = ApiRequestException.class)
     public void crearHabitacionSinTipo(){
-        Habitacion habitacion = new Habitacion(1,null,200);
+        HabitacionDTO habitacion = new HabitacionDTO(1,null,200);
         this.habitacionService.crearHabitacion(habitacion);
     }
     @Test(expected = ApiRequestException.class)
     public void crearHabitacionSinPrecio(){
-        Habitacion habitacion = new Habitacion(1,"premium",null);
+        HabitacionDTO habitacion = new HabitacionDTO(1,"premium",null);
         this.habitacionService.crearHabitacion(habitacion);
     }
     @Test(expected = ApiRequestException.class)
     public void crearHabitacionSinNada(){
-        Habitacion habitacion = new Habitacion();
+        HabitacionDTO habitacion = new HabitacionDTO();
         this.habitacionService.crearHabitacion(habitacion);
     }
 

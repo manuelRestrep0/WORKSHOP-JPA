@@ -1,5 +1,7 @@
 package com.manuel.workshop.controller;
 
+import com.manuel.workshop.dto.HabitacionDTO;
+import com.manuel.workshop.dto.ReservaDTO;
 import com.manuel.workshop.model.Habitacion;
 import com.manuel.workshop.model.Reserva;
 import com.manuel.workshop.service.ReservaService;
@@ -21,21 +23,21 @@ public class ReservaController {
     }
 
     @GetMapping("/disponibles/{fecha}")
-    public List<Habitacion> disponiblesFecha(@PathVariable("fecha") String fecha){
+    public List<HabitacionDTO> disponiblesFecha(@PathVariable("fecha") String fecha){
         return this.reservaService.obtenerHabitacionesDisponiblesFecha(fecha);
     }
     @GetMapping("/disponibles/habitacion")
-    public List<Habitacion> disponiblesTipo(@RequestParam("tipo") String tipo, @RequestParam("fecha") String fecha){
+    public List<HabitacionDTO> disponiblesTipo(@RequestParam("tipo") String tipo, @RequestParam("fecha") String fecha){
         return this.reservaService.filtrarHabitacionesTipo(tipo,fecha);
     }
 
     @GetMapping("/reservas/{cedula}")
-    public List<Reserva> reservasCliente(@PathVariable("cedula") Integer cedula){
+    public List<ReservaDTO> reservasCliente(@PathVariable("cedula") Integer cedula){
         return this.reservaService.obtenerReservasCliente(cedula);
     }
 
     @PostMapping("/reservar")
-    public Reserva reservar(@RequestParam("numero")Integer numeroHabitacion, @RequestParam("fecha") String fecha, @RequestParam("cedula") Integer cedula){
+    public ReservaDTO reservar(@RequestParam("numero")Integer numeroHabitacion, @RequestParam("fecha") String fecha, @RequestParam("cedula") Integer cedula){
         return this.reservaService.crearReserva(numeroHabitacion,cedula,fecha);
     }
 

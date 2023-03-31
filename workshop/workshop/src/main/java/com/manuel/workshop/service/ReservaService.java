@@ -1,6 +1,8 @@
 package com.manuel.workshop.service;
 
 import com.manuel.workshop.controller.ReservaController;
+import com.manuel.workshop.dto.HabitacionDTO;
+import com.manuel.workshop.dto.ReservaDTO;
 import com.manuel.workshop.exception.ApiRequestException;
 import com.manuel.workshop.model.Cliente;
 import com.manuel.workshop.model.Habitacion;
@@ -31,21 +33,21 @@ public class ReservaService {
         this.habitacionRepository = habitacionRepository;
     }
 
-    public List<Habitacion> obtenerHabitacionesDisponiblesFecha(String fecha){
+    public List<HabitacionDTO> obtenerHabitacionesDisponiblesFecha(String fecha){
         LocalDate date = stringToDate(fecha);
         fechaValida(date);
         return validarDisponibilidadFecha(date);
     }
-    public List<Habitacion> filtrarHabitacionesTipo(String tipo, String fecha){
+    public List<HabitacionDTO> filtrarHabitacionesTipo(String tipo, String fecha){
         LocalDate date = stringToDate(fecha);
         fechaValida(date);
-        List<Habitacion> disponibles = validarDisponibilidadFecha(date);
+        List<HabitacionDTO> disponibles = validarDisponibilidadFecha(date);
         disponibles = disponibles.stream()
                 .filter(habitacion -> habitacion.getTipoHabitacion().equals(tipo))
                 .collect(Collectors.toList());
         return disponibles;
     }
-    public Reserva crearReserva(Integer numHabitacion, Integer cedula, String fecha){
+    public ReservaDTO crearReserva(Integer numHabitacion, Integer cedula, String fecha){
         LocalDate auxFecha = stringToDate(fecha);
         fechaValida(auxFecha);
         Optional<Cliente> auxCliente = this.clienteRepository.findById(cedula);
@@ -53,9 +55,10 @@ public class ReservaService {
             Optional<Habitacion> auxHab = this.habitacionRepository.findById(numHabitacion);
             if(auxHab.isPresent()){
 
-                List<Habitacion> disponibles = validarDisponibilidadFecha(auxFecha);
+                List<HabitacionDTO> disponibles = validarDisponibilidadFecha(auxFecha);
                 if(disponibles.contains(auxHab.get())){
-                    return this.reservaRepository.save(new Reserva(auxFecha,auxHab.get(),auxCliente.get(),auxHab.get().getPrecioBase()));
+                    this.reservaRepository.save(new Reserva(auxFecha,auxHab.get(),auxCliente.get(),auxHab.get().getPrecioBase()));
+                    return new ReservaDTO(auxFecha,auxHab.get(),auxCliente.get(),auxHab.get().getPrecioBase());
                 } else{
                     throw new ApiRequestException("Esta habitacion no esta disponible");
                 }
@@ -66,7 +69,7 @@ public class ReservaService {
             throw new ApiRequestException("Este cliente no esta registrado");
         }
     }
-    public List<Reserva> obtenerReservasCliente(Integer cedula){
+    public List<ReservaDTO> obtenerReservasCliente(Integer cedula){
         Optional<Cliente> auxCliente = this.clienteRepository.findById(cedula);
         if(!auxCliente.isPresent()){
             throw new ApiRequestException("Esta cedula no esta registrada");
@@ -75,18 +78,27 @@ public class ReservaService {
         reservasCliente = reservasCliente.stream()
                 .filter(reserva -> reserva.getCliente().getCedula().equals(cedula))
                 .collect(Collectors.toList());
-        return reservasCliente;
+        List<ReservaDTO> reservasDTO = new ArrayList<>();
+        reservasCliente.stream()
+                .forEach(reserva -> reservasDTO.add(new ReservaDTO(reserva.getFechaReserva(),reserva.getHabitacion(),reserva.getCliente()
+                ,reserva.getTotalPago())));
+        return reservasDTO;
     }
-    public List<Habitacion> validarDisponibilidadFecha(LocalDate fecha){
+    public List<HabitacionDTO> validarDisponibilidadFecha(LocalDate fecha){
         List<Habitacion> disponibles = this.habitacionRepository.findAll();
         List<Habitacion> habReservas = new ArrayList<>();
+
         List<Reserva> habitacionesReservadas = this.reservaRepository.findAll();
         habitacionesReservadas.stream()
+                .filter(reserva -> reserva.getFechaReserva().equals(fecha))
                 .forEach(reserva -> habReservas.add(reserva.getHabitacion()));
         disponibles = disponibles.stream()
                 .filter(habitacion -> !habReservas.contains(habitacion))
                 .collect(Collectors.toList());
-        return disponibles;
+        List<HabitacionDTO> retornoDisponibles = new ArrayList<>();
+        disponibles.stream()
+                .forEach(habitacion -> retornoDisponibles.add(new HabitacionDTO(habitacion.getNumero(),habitacion.getTipoHabitacion(),habitacion.getPrecioBase())));
+        return retornoDisponibles;
     }
     public LocalDate stringToDate(String fecha){
         DateTimeFormatter formatter;
@@ -94,7 +106,6 @@ public class ReservaService {
             formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         } catch (DateTimeParseException e){
             throw new ApiRequestException(e.getMessage());
-
         }
         LocalDate date = LocalDate.parse(fecha,formatter);
         return date;

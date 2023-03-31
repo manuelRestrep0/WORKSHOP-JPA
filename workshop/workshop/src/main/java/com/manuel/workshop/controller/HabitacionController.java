@@ -1,5 +1,6 @@
 package com.manuel.workshop.controller;
 
+import com.manuel.workshop.dto.HabitacionDTO;
 import com.manuel.workshop.model.Cliente;
 import com.manuel.workshop.model.Habitacion;
 import com.manuel.workshop.service.HabitacionService;
@@ -25,7 +26,7 @@ public class HabitacionController {
     }
 
     @PostMapping("/habitacion")
-    public Habitacion crearHabitacion(@RequestBody Habitacion habitacion){
+    public HabitacionDTO crearHabitacion(@RequestBody HabitacionDTO habitacion){
         return this.habitacionService.crearHabitacion(habitacion);
     }
 

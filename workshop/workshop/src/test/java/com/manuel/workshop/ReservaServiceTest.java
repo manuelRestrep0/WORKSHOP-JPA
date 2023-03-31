@@ -1,6 +1,7 @@
 package com.manuel.workshop;
 
 import com.fasterxml.jackson.databind.util.ArrayIterator;
+import com.manuel.workshop.dto.HabitacionDTO;
 import com.manuel.workshop.exception.ApiRequestException;
 import com.manuel.workshop.model.Habitacion;
 import com.manuel.workshop.repository.ClienteRepository;
@@ -83,8 +84,7 @@ public class ReservaServiceTest {
         ));
         when(habitacionRepository.findAll()).thenReturn(disponibles);
 
-        List<Habitacion> habitaciones = this.reservaService.obtenerHabitacionesDisponiblesFecha(fecha);
-
+        List<HabitacionDTO> habitaciones = this.reservaService.obtenerHabitacionesDisponiblesFecha(fecha);
         assertTrue(!habitaciones.isEmpty());
     }
 
@@ -100,7 +100,7 @@ public class ReservaServiceTest {
         ));
         when(habitacionRepository.findAll()).thenReturn(disponibles);
 
-        List<Habitacion> habitaciones = this.reservaService.obtenerHabitacionesDisponiblesFecha(fecha);
+        List<HabitacionDTO> habitaciones = this.reservaService.obtenerHabitacionesDisponiblesFecha(fecha);
     }
     @Test
     public void obtenerHabitacionesDisponiblesFiltradasPorTipoHabitacionExistente(){

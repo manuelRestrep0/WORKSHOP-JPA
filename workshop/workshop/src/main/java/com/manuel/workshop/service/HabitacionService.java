@@ -1,5 +1,6 @@
 package com.manuel.workshop.service;
 
+import com.manuel.workshop.dto.HabitacionDTO;
 import com.manuel.workshop.exception.ApiRequestException;
 import com.manuel.workshop.model.Habitacion;
 import com.manuel.workshop.repository.HabitacionRepository;
@@ -16,15 +17,17 @@ public class HabitacionService {
         this.habitacionRepository = habitacionRepository;
     }
 
-    public Habitacion crearHabitacion(Habitacion habitacion){
-        if(habitacion.getTipoHabitacion()==null){
+    public HabitacionDTO crearHabitacion(HabitacionDTO habitacionDTO){
+        if(habitacionDTO.getTipoHabitacion()==null){
             throw new ApiRequestException("Hace falta el tipo de habitacion (estandar/premium)");
-        } else if(habitacion.getPrecioBase()==null){
+        } else if(habitacionDTO.getPrecioBase()==null){
             throw new ApiRequestException("Hace falta el precio de la habitacion");
-        } else if(habitacion.getNumero()==null){
+        } else if(habitacionDTO.getNumero()==null){
             throw new ApiRequestException("Hace falta el numero de la habitacion");
         }
-        return this.habitacionRepository.save(habitacion);
+        Habitacion habitacion = new Habitacion(habitacionDTO.getNumero(), habitacionDTO.getTipoHabitacion(), habitacionDTO.getPrecioBase());
+        this.habitacionRepository.save(habitacion);
+        return habitacionDTO;
     }
     public void crearHabitaciones(){
         this.habitacionRepository.save(new Habitacion(1,"estandar",100));

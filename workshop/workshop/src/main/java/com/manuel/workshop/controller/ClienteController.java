@@ -1,5 +1,6 @@
 package com.manuel.workshop.controller;
 
+import com.manuel.workshop.dto.ClienteDTO;
 import com.manuel.workshop.model.Cliente;
 import com.manuel.workshop.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class ClienteController {
     }
 
     @PostMapping("/cliente")
-    public Cliente crearCliente(@RequestBody Cliente cliente){
-        return this.clienteService.crear(cliente);
+    public ClienteDTO crearCliente(@RequestBody ClienteDTO clienteDTO){
+        return this.clienteService.crear(clienteDTO);
     }
     @PostMapping("/clientes")
     public String crearClientes(){
