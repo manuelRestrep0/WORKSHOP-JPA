@@ -1,3 +1,43 @@
+# Sistema de reservas para una dena de hoteles.
+
+Este es un proyecto api REST para gestionar reservas del hotel Ashir. 
+La api permite a los clientes buscar y reservas habitaciones en el hotel, tambien permite registrar nuevos clientes.
+
+
+## Las rutas que se utilizan son las siguientes: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Pantallazos de las respuestas:
 
 ### creacion correcta de cliente:
