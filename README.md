@@ -4,7 +4,7 @@ Este es un proyecto api REST para gestionar reservas del hotel Ashir.
 La api permite a los clientes buscar y reservas habitaciones en el hotel, tambien permite registrar nuevos clientes.
 
 
-## Para testearlo: 
+## Rutas: 
 
 POST - http://localhost:8080/api/v1/cliente  (Para registrar un cliente.)
 
